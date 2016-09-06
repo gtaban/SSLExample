@@ -1,9 +1,17 @@
 import Kitura
+import SSLService
 import HeliumLogger
 
 HeliumLogger.use()
 
 let router = Router()
+
+let myCertPath = "/Users/gtaban/Developer/SecureService/SSLExample/Creds/Self-Signed/cert.pem"
+let myKeyPath = "/Users/gtaban/Developer/SecureService/SSLExample/Creds/Self-Signed/key.pem"
+
+var mySSLConfig = SSLService.Configuration(withCACertificateDirectory: nil, usingCertificateFile: myCertPath, withKeyFile: myKeyPath)
+
+mySSLConfig.cipherSuite = "ALL"
 
 router.get("/") {
     request, response, next in
@@ -11,7 +19,7 @@ router.get("/") {
     next()
 }
 
-Kitura.addHTTPServer(onPort: 8090, with: router)
+Kitura.addHTTPServer(onPort: 8090, with: router, withSSL: mySSLConfig)
 Kitura.run()
 
 

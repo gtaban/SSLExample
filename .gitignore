@@ -3,5 +3,4 @@ Packages
 build
 Packages
 *.pkg
-*.xcodeproj
 *.DS_Store

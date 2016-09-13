@@ -7,6 +7,7 @@ HeliumLogger.use()
 let router = Router()
 
 /*
+ 
 // Gelareh's macOS credentials path...
 let myCertPath = "/Users/gtaban/Developer/SecureService/SSLExample/Creds/Self-Signed/cert.pem"
 let myKeyPath = "/Users/gtaban/Developer/SecureService/SSLExample/Creds/Self-Signed/key.pem"
@@ -21,20 +22,29 @@ let myKeyPath = "/Users/gtaban/Developer/SecureService/SSLExample/Creds/Self-Sig
 //let myKeyPath = "/mnt/hgfs/IBMSwift/Open Source/SSLExample/Creds/Self-Signed/key.pem"
 
 var mySSLConfig = SSLService.Configuration(withCACertificateDirectory: nil, usingCertificateFile: myCertPath, withKeyFile: myKeyPath, usingSelfSignedCerts: true)
+
+*/
+/*
+//#if HAVE_CA_CHAIN_CERT
+// Gelareh's macOS ca credentials path...
+//let myCertChainFile = "/Users/gtaban/Developer/SecureService/SSLExample/Creds/CertCA/ca-chain.cert.pem"
+let myCertChainFile = "/Users/gtaban/Developer/SecureService/SSLExample/Creds/CertCA/ca.cert.pem"
+let myCertFile = "/Users/gtaban/Developer/SecureService/SSLExample/Creds/CertCA/intermediate.cert.pem"
+let myKeyFile = "/Users/gtaban/Developer/SecureService/SSLExample/Creds/CertCA/intermediate.key.pem"
+//let myCertPath = "/Users/gtaban/Developer/SecureService/SSLExample/Creds/CertCA/server.cert.pem"
+//let myKeyPath = "/Users/gtaban/Developer/SecureService/SSLExample/Creds/CertCA/server.key.pem"
+
+var mySSLConfig = SSLService.Configuration(withCACertificateFilePath: myCertChainFile, usingCertificateFile: myCertFile, withKeyFile: myKeyFile, usingSelfSignedCerts: false)
 */
 
 
-//#if HAVE_CA_CHAIN_CERT
-// Gelareh's macOS ca credentials path...
-let myCertChainFile = "/Users/gtaban/Developer/SecureService/SSLExample/Creds/CertCA/ca-chain.cert.pem"
-let myCertPath = "/Users/gtaban/Developer/SecureService/SSLExample/Creds/CertCA/server.cert.pem"
-let myKeyPath = "/Users/gtaban/Developer/SecureService/SSLExample/Creds/CertCA/server.key.pem"
+let myCertChainFile = "/Users/gtaban/Developer/SecureService/SSLExample/Creds/Self-Signed/cert.pfx"
 
-var mySSLConfig = SSLService.Configuration(withCACertificateFilePath: myCertChainFile, usingCertificateFile: myCertPath, withKeyFile: myKeyPath, usingSelfSignedCerts: false)
+var mySSLConfig = SSLService.Configuration(withChainFilePath: myCertChainFile, usingSelfSignedCerts:true, withPassword:"password");
 
-
-
-mySSLConfig.cipherSuite = "ALL"
+#if os(Linux)
+    mySSLConfig.cipherSuite = "ALL"
+#endif
 
 router.get("/") {
     request, response, next in

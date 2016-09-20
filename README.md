@@ -14,7 +14,7 @@ openssl req -new -sha256 -key key.pem -out csr.csr
 openssl req -x509 -sha256 -days 365 -key key.pem -in csr.csr -out certificate.pem
 
 // convert cert into PKCS#12 format:
-openssl pkcs12 -export -out cert.pfx -inkey key.pem -in cert.pem
+openssl pkcs12 -export -out cert.pfx -inkey key.pem -in certificate.pem
 ```
 
 Alternatively, use: https://www.sslshopper.com/ssl-converter.html

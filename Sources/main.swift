@@ -29,8 +29,7 @@ import HeliumLogger
     }
 #else
     func TestSelfSignedMac() -> SSLConfig {
-//        let myCertChainFile = "/Users/gtaban/Developer/SecureService/SSLExample/Creds/Self-Signed/cert.pfx"
-        let myCertChainFile = "/Users/gtaban/Developer/SecureService/SSLExample/Creds/tmp/cert.pfx"
+        let myCertChainFile = "/Users/gtaban/Developer/SecureService/SSLExample/Creds/Self-Signed/cert.pfx"
         
         return SSLConfig(withChainFilePath: myCertChainFile, withPassword:"password", usingSelfSignedCerts:true)
     }
@@ -67,7 +66,12 @@ router.get("/") {
     next()
 }
 
+// https://localhost:8090
 Kitura.addHTTPServer(onPort: 8090, with: router, withSSL: mySSLConfigSelfSigned)
+
+// https://localhost:8080
+Kitura.addHTTPServer(onPort: 8080, with: router, withSSL: mySSLConfigChain)
+
 Kitura.run()
 
 

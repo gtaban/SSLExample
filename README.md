@@ -67,6 +67,6 @@ openssl verify -CAfile ca-chain.cert.pem server.cert.pem
 
 // Convert to PKCS12 for testing on mac
 openssl pkcs12 -export -out certificate.pfx -inkey privateKey.key -in certificate.crt -certfile CACert.crt
-or use: https://www.sslshopper.com/ssl-converter.html
+or better yet! use: https://www.sslshopper.com/ssl-converter.html
 ```
 

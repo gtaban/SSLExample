@@ -1,11 +1,17 @@
 import Kitura
 import HeliumLogger
 
+fileprivate let defaultCredsRoot = "/Users/gtaban/Developer/SecureService/SSLExample/Creds"
+fileprivate let myCredsRoot = "/replace/with/path/to/Creds"
+
+// TODO: redefine this to point to the absolute path to Creds within the project directory
+fileprivate let credsRoot = defaultCredsRoot
+
 #if os(Linux)
     func TestSelfSignedLinux() -> SSLConfig {
         // Gelareh's Self-signed macOS credentials path...
-        let myCertPath = "/Users/gtaban/Developer/SecureService/SSLExample/Creds/Self-Signed/cert.pem"
-        let myKeyPath = "/Users/gtaban/Developer/SecureService/SSLExample/Creds/Self-Signed/key.pem"
+        let myCertPath = "\(credsRoot)/Self-Signed/cert.pem"
+        let myKeyPath = "\(credsRoot)/Self-Signed/key.pem"
         
         // Bill's Self-signed macOS credentials path...
         //let myCertPath = "/Users/babt/Source/IBMSwift/Open Source/SSLExample/Creds/Self-Signed/cert.pem"
@@ -20,22 +26,22 @@ import HeliumLogger
     
     func  TestCertChainLinux() -> SSLConfig {
         // Gelareh's macOS ca credentials path...
-        let myCertChainFile = "/Users/gtaban/Developer/SecureService/SSLExample/Creds/CertCA/ca-chain.cert.pem"
-        let myCertFile = "/Users/gtaban/Developer/SecureService/SSLExample/Creds/CertCA/server.cert.pem"
-        let myKeyFile = "/Users/gtaban/Developer/SecureService/SSLExample/Creds/CertCA/server.key.pem"
+        let myCertChainFile = "\(credsRoot)/CertCA/ca-chain.cert.pem"
+        let myCertFile = "\(credsRoot)/CertCA/server.cert.pem"
+        let myKeyFile = "\(credsRoot)/CertCA/server.key.pem"
         
         return SSLConfig(withCACertificateFilePath: myCertChainFile, usingCertificateFile: myCertFile, withKeyFile: myKeyFile, usingSelfSignedCerts: false)
         
     }
 #else
     func TestSelfSignedMac() -> SSLConfig {
-        let myCertChainFile = "/Users/gtaban/Developer/SecureService/SSLExample/Creds/Self-Signed/cert.pfx"
+        let myCertChainFile = "\(credsRoot)/Self-Signed/cert.pfx"
         
         return SSLConfig(withChainFilePath: myCertChainFile, withPassword:"password", usingSelfSignedCerts:true)
     }
     
     func TestCertChainMac() -> SSLConfig {
-        let myCertChainFile = "/Users/gtaban/Developer/SecureService/SSLExample/Creds/CertCA/server.cert.pfx"
+        let myCertChainFile = "\(credsRoot)/CertCA/server.cert.pfx"
         
         return SSLConfig(withChainFilePath: myCertChainFile, withPassword:"password", usingSelfSignedCerts:false)
     }

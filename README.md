@@ -1,7 +1,35 @@
 # SSLExample
 ```Integrates Kitura with SSLService```
 
-# Create self-signed certificate with openssl
+## Getting Started
+
+This repository contains an example that you can immediately build and run on macOS or linux, with one modification.
+
+The modification is to update the hardcoded file path to the directory Creds, which contains a set of self-signed certificates.
+
+1. clone the repo: `$ git clone git@github.com:gtaban/SSLExample.git`
+2. make note of the absolute path to Creds on your system (e.g., "/Users/bob/Desktop/SSLExample/Creds")
+3. edit main.swift so that `credsRoot` points to that path, instead of the default path
+4. build and run the project:
+
+```sh
+$ swift build # this will fetch dependencies and compile
+$ .build/debug/SSLExample
+```
+
+5. Verify that you can connect to the HTTPS server using curl
+
+```sh
+$ curl -X GET --insecure https://localhost:8090 # => "Hello, World"
+
+```
+
+
+## Creating your own certificate
+
+For a real deployment, you will want want to create your own self-signed certificates. Here is how to do so with openssl.
+
+### Create self-signed certificate with openssl
 
 ```
 // generate an RSA key
@@ -19,7 +47,8 @@ openssl pkcs12 -export -out cert.pfx -inkey key.pem -in certificate.pem
 
 Alternatively, use: https://www.sslshopper.com/ssl-converter.html
 
-# Create certificate chain CA->intermediate->server
+### Create certificate chain CA->intermediate->server
+
 // Based on https://jamielinux.com/docs/openssl-certificate-authority/introduction.html
 // Use above link to 
 

@@ -15,7 +15,7 @@ func TestSelfSigned() throws -> SSLConfig {
     #else
         let relativeCertPath = "/Creds/Self-Signed/cert.pfx"
     #endif
-        
+
         guard let myCertFile = getAbsolutePath(relativePath: relativeCertPath, useFallback: false) else {
             Log.error("Could not find file at relative path \(relativeCertPath).")
             throw SSLExampleError.invalidPath
@@ -26,7 +26,7 @@ func TestSelfSigned() throws -> SSLConfig {
             throw SSLExampleError.invalidPath
         }
     #endif
-        
+
     #if os(Linux)
         return SSLConfig(withCACertificateDirectory: nil, usingCertificateFile: myCertFile, withKeyFile: myKeyFile, usingSelfSignedCerts: true)
     #else
@@ -34,11 +34,11 @@ func TestSelfSigned() throws -> SSLConfig {
     #endif
 }
 
-    
-    
-    
+
+
+
 func TestCertChain() throws -> SSLConfig {
-    
+
     #if os(Linux)
         let relativeCertChainPath = "/Creds/CertCA/ca-chain.cert.pem"
         let relativeCertPath = "/Creds/CertCA/server.cert.pem"
@@ -46,18 +46,22 @@ func TestCertChain() throws -> SSLConfig {
     #else
         let relativeCertPath = "/Creds/CertCA/server.cert.pfx"
     #endif
-    
+
     guard let myCertFile = getAbsolutePath(relativePath: relativeCertPath, useFallback: false) else {
         Log.error("Could not find file at relative path \(relativeCertPath).")
         throw SSLExampleError.invalidPath
     }
     #if os(Linux)
         guard let myKeyFile = getAbsolutePath(relativePath: relativeFilePath, useFallback: false) else {
-            Log.error("Could not find file at relative path \(relativeCertPath).")
+            Log.error("Could not find file at relative path \(relativeFilePath).")
+            throw SSLExampleError.invalidPath
+        }
+        guard let myCertChainFile = getAbsolutePath(relativePath: relativeCertChainPath, useFallback: false) else {
+            Log.error("Could not find file at relative path \(relativeCertChainPath).")
             throw SSLExampleError.invalidPath
         }
     #endif
-    
+
     #if os(Linux)
         return SSLConfig(withCACertificateDirectory: nil, usingCertificateFile: myCertFile, withKeyFile: myKeyFile, usingSelfSignedCerts: true)
     #else
@@ -70,11 +74,11 @@ func getAbsolutePath(relativePath: String, useFallback: Bool) -> String? {
     let initialPath = #file
     let components = initialPath.characters.split(separator: "/").map(String.init)
     let notLastTwo = components[0..<components.count - 2]
-    
+
     var filePath = "/" + notLastTwo.joined(separator: "/") + relativePath
-    
+
     let fileManager = FileManager.default
-    
+
     if fileManager.fileExists(atPath: filePath) {
         return filePath
     } else if useFallback {
@@ -106,6 +110,3 @@ public func parseAddress() -> (String, Int) {
     }
     return (ip, port)
 }
-
-
-

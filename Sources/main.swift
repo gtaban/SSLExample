@@ -7,15 +7,11 @@ let router = Router()
 var mySSLConfigSelfSigned: SSLConfig
 var mySSLConfigChain: SSLConfig
 
+mySSLConfigSelfSigned = try TestSelfSigned()
+mySSLConfigChain = try TestCertChain()
+
 #if os(Linux)
-    mySSLConfigSelfSigned = TestSelfSignedLinux()
-    mySSLConfigChain = TestCertChainLinux()
-
     mySSLConfig.cipherSuite = "ALL"
-#else
-
-    mySSLConfigSelfSigned = TestSelfSignedMac()
-    mySSLConfigChain = TestCertChainMac()
 #endif // os(Linux)
 
 router.get("/") {

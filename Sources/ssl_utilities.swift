@@ -1,79 +1,95 @@
 import Kitura
 import HeliumLogger
+import LoggerAPI
+import Foundation
 
-#if os(Linux)
-    func TestSelfSignedLinux() -> SSLConfig {
-        // Gelareh's Self-signed macOS credentials path...
-        let myCertPath = "/Users/gtaban/Developer/SecureService/SSLExample/Creds/Self-Signed/cert.pem"
-        let myKeyPath = "/Users/gtaban/Developer/SecureService/SSLExample/Creds/Self-Signed/key.pem"
-        
-        // Bill's Self-signed macOS credentials path...
-        //let myCertPath = "/Users/babt/Source/IBMSwift/Open Source/SSLExample/Creds/Self-Signed/cert.pem"
-        //let myKeyPath = "/Users/babt/Source/IBMSwift/Open Source/SSLExample/Creds/Self-Signed/key.pem"
-        
-        // Bill's Linux credentials path...
-        //let myCertPath = "/mnt/hgfs/IBMSwift/Open Source/SSLExample/Creds/Self-Signed/cert.pem"
-        //let myKeyPath = "/mnt/hgfs/IBMSwift/Open Source/SSLExample/Creds/Self-Signed/key.pem"
-        
-        return SSLConfig(withCACertificateDirectory: nil, usingCertificateFile: myCertPath, withKeyFile: myKeyPath, usingSelfSignedCerts: true)
-    }
-    
-    func  TestCertChainLinux() -> SSLConfig {
-        // Gelareh's macOS ca credentials path...
-        let myCertChainFile = "/Users/gtaban/Developer/SecureService/SSLExample/Creds/CertCA/ca-chain.cert.pem"
-        let myCertFile = "/Users/gtaban/Developer/SecureService/SSLExample/Creds/CertCA/server.cert.pem"
-        let myKeyFile = "/Users/gtaban/Developer/SecureService/SSLExample/Creds/CertCA/server.key.pem"
-        
-        return SSLConfig(withCACertificateFilePath: myCertChainFile, usingCertificateFile: myCertFile, withKeyFile: myKeyFile, usingSelfSignedCerts: false)
-        
-    }
-#else
-    func TestSelfSignedMac() -> SSLConfig {
-        let myCertChainFile = "/Users/gtaban/Developer/SecureService/SSLExample/Creds/Self-Signed/cert.pfx"
-        
-        return SSLConfig(withChainFilePath: myCertChainFile, withPassword:"password", usingSelfSignedCerts:true)
-    }
-    
-    func TestCertChainMac() -> SSLConfig {
-        let myCertChainFile = "/Users/gtaban/Developer/SecureService/SSLExample/Creds/CertCA/server.cert.pfx"
-        
-        return SSLConfig(withChainFilePath: myCertChainFile, withPassword:"password", usingSelfSignedCerts:false)
-    }
-    
-#endif // os(Linux)
-
-
-HeliumLogger.use()
-
-let router = Router()
-var mySSLConfigSelfSigned: SSLConfig
-var mySSLConfigChain: SSLConfig
-
-#if os(Linux)
-    mySSLConfigSelfSigned = TestSelfSignedLinux()
-    mySSLConfigChain = TestCertChainLinux()
-
-    mySSLConfig.cipherSuite = "ALL"
-#else
-
-    mySSLConfigSelfSigned = TestSelfSignedMac()
-    mySSLConfigChain = TestCertChainMac()
-#endif // os(Linux)
-
-router.get("/") {
-    request, response, next in
-    response.send("Hello, World!")
-    next()
+public enum SSLExampleError: Error {
+    case invalidPath
 }
 
-// https://localhost:8090
-Kitura.addHTTPServer(onPort: 8090, with: router, withSSL: mySSLConfigSelfSigned)
 
-// https://localhost:8080
-Kitura.addHTTPServer(onPort: 8080, with: router, withSSL: mySSLConfigChain)
+func TestSelfSigned() throws -> SSLConfig {
+    #if os(Linux)
+        let relativeCertPath = "/Creds/Self-Signed/cert.pem"
+        let relativeFilePath = "/Creds/Self-Signed/key.pem"
+    #else
+        let relativeCertPath = "/Creds/Self-Signed/cert.pfx"
+    #endif
+        
+        guard let myCertFile = getAbsolutePath(relativePath: relativeCertPath, useFallback: false) else {
+            Log.error("Could not find file at relative path \(relativeCertPath).")
+            throw SSLExampleError.invalidPath
+        }
+    #if os(Linux)
+        guard let myKeyFile = getAbsolutePath(relativePath: relativeFilePath, useFallback: false) else {
+            Log.error("Could not find file at relative path \(relativeCertPath).")
+            throw SSLExampleError.invalidPath
+        }
+    #endif
+        
+    #if os(Linux)
+        return SSLConfig(withCACertificateDirectory: nil, usingCertificateFile: myCertFile, withKeyFile: myKeyFile, usingSelfSignedCerts: true)
+    #else
+        return SSLConfig(withChainFilePath: myCertFile, withPassword:"password", usingSelfSignedCerts:true)
+    #endif
+}
 
-Kitura.run()
+    
+    
+    
+func TestCertChain() throws -> SSLConfig {
+    
+    #if os(Linux)
+        let relativeCertChainPath = "/Creds/CertCA/ca-chain.cert.pem"
+        let relativeCertPath = "/Creds/CertCA/server.cert.pem"
+        let relativeFilePath = "/Creds/CertCA/server.key.pem"
+    #else
+        let relativeCertPath = "/Creds/CertCA/server.cert.pfx"
+    #endif
+    
+    guard let myCertFile = getAbsolutePath(relativePath: relativeCertPath, useFallback: false) else {
+        Log.error("Could not find file at relative path \(relativeCertPath).")
+        throw SSLExampleError.invalidPath
+    }
+    #if os(Linux)
+        guard let myKeyFile = getAbsolutePath(relativePath: relativeFilePath, useFallback: false) else {
+            Log.error("Could not find file at relative path \(relativeCertPath).")
+            throw SSLExampleError.invalidPath
+        }
+    #endif
+    
+    #if os(Linux)
+        return SSLConfig(withCACertificateDirectory: nil, usingCertificateFile: myCertFile, withKeyFile: myKeyFile, usingSelfSignedCerts: true)
+    #else
+        return SSLConfig(withChainFilePath: myCertFile, withPassword:"password", usingSelfSignedCerts:true)
+    #endif
+}
 
+
+func getAbsolutePath(relativePath: String, useFallback: Bool) -> String? {
+    let initialPath = #file
+    let components = initialPath.characters.split(separator: "/").map(String.init)
+    let notLastTwo = components[0..<components.count - 2]
+    
+    var filePath = "/" + notLastTwo.joined(separator: "/") + relativePath
+    
+    let fileManager = FileManager.default
+    
+    if fileManager.fileExists(atPath: filePath) {
+        return filePath
+    } else if useFallback {
+        // Get path in alternate way, if first way fails
+        let currentPath = fileManager.currentDirectoryPath
+        filePath = currentPath + relativePath
+        if fileManager.fileExists(atPath: filePath) {
+            return filePath
+        } else {
+            return nil
+        }
+    } else {
+        return nil
+    }
+}
 
 
 

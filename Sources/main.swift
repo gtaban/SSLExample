@@ -12,7 +12,8 @@ mySSLConfigSelfSigned = try TestSelfSigned()
 mySSLConfigChain = try TestCertChain()
 
 #if os(Linux)
-    mySSLConfig.cipherSuite = "ALL"
+    mySSLConfigSelfSigned.cipherSuite = "ALL"
+    mySSLConfigChain.cipherSuite = "ALL"
 #endif // os(Linux)
 
 router.get("/") {

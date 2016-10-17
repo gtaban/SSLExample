@@ -1,0 +1,7 @@
+app:
+  image: ibmcom/swift-ubuntu
+  ports:
+    - "8090:8090"
+  volumes:
+    - .:/root/SSLSample
+  command: bash -c "cd /root/SSLSample && swift build --clean && rm -rf Packages/ && swift build"

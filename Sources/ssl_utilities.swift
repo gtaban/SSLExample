@@ -91,7 +91,21 @@ func getAbsolutePath(relativePath: String, useFallback: Bool) -> String? {
     }
 }
 
-
+public func parseAddress() -> (String, Int) {
+    let args = Array(ProcessInfo.processInfo.arguments[1..<ProcessInfo.processInfo.arguments.count])
+    var port = 8090 // default port
+    var ip = "0.0.0.0" // default ip
+    if args.count == 2 && args[0] == "-bind" {
+        let tokens = args[1].components(separatedBy: ":")
+        if (tokens.count == 2) {
+            ip = tokens[0]
+            if let portNumber = Int(tokens[1]) {
+                port = portNumber
+            }
+        }
+    }
+    return (ip, port)
+}
 
 
 

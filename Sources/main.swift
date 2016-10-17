@@ -1,5 +1,6 @@
 import Kitura
 import HeliumLogger
+import LoggerAPI
 
 HeliumLogger.use()
 
@@ -20,11 +21,14 @@ router.get("/") {
     next()
 }
 
-// https://localhost:8090
-Kitura.addHTTPServer(onPort: 8090, with: router, withSSL: mySSLConfigSelfSigned)
+// if a procfile exists, pick up port from there. Else, assign 8090 by default
+let (ip, port) = parseAddress()
 
-// https://localhost:8080
-Kitura.addHTTPServer(onPort: 8080, with: router, withSSL: mySSLConfigChain)
+// https://localhost:8090
+Kitura.addHTTPServer(onPort: port, with: router, withSSL: mySSLConfigSelfSigned)
+
+//// https://localhost:8080
+//Kitura.addHTTPServer(onPort: 8080, with: router, withSSL: mySSLConfigChain)
 
 Kitura.run()
 

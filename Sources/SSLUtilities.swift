@@ -29,8 +29,10 @@ func TestSelfSigned() throws -> SSLConfig {
 
     #if os(Linux)
         return SSLConfig(withCACertificateDirectory: nil, usingCertificateFile: myCertFile, withKeyFile: myKeyFile, usingSelfSignedCerts: true)
+//        return SSLConfig(withCACertificateDirectory: nil, usingCertificateFile: myCertFile, withKeyFile: myKeyFile, usingSelfSignedCerts: true, cipherSuite: "AES256-SHA256:AES256-GCM-SHA38:DHE-RSA-AES256-SHA256")
     #else
         return SSLConfig(withChainFilePath: myCertFile, withPassword:"password", usingSelfSignedCerts:true)
+//        return SSLConfig(withChainFilePath: myCertFile, withPassword:"password", usingSelfSignedCerts:true, cipherSuite: "14,13,2B,2F,2C,30,9E,9F,23,27,09,28,13,24,0A,14,67,33,6B,39,08,12,16,9C,9D,3C")
     #endif
 }
 
@@ -64,8 +66,10 @@ func TestCertChain() throws -> SSLConfig {
 
     #if os(Linux)
         return SSLConfig(withCACertificateFilePath: myCertChainFile, usingCertificateFile: myCertFile, withKeyFile: myKeyFile, usingSelfSignedCerts: false)
+//        return SSLConfig(withCACertificateFilePath: myCertChainFile, usingCertificateFile: myCertFile, withKeyFile: myKeyFile, usingSelfSignedCerts: false, cipherSuite: "AES256-SHA256:AES256-GCM-SHA38:DHE-RSA-AES256-SHA256")
     #else
         return SSLConfig(withChainFilePath: myCertFile, withPassword:"password", usingSelfSignedCerts:true)
+//        return SSLConfig(withChainFilePath: myCertFile, withPassword:"password", usingSelfSignedCerts:true, cipherSuite: "14,13,2B,2F,2C,30,9E,9F,23,27,09,28,13,24,0A,14,67,33,6B,39,08,12,16,9C,9D,3C")
     #endif
 }
 

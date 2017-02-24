@@ -11,12 +11,6 @@ var mySSLConfigChain: SSLConfig
 mySSLConfigSelfSigned = try TestSelfSigned()
 mySSLConfigChain = try TestCertChain()
 
-// TODO: Gelareh to addres this
-// #if os(Linux)
-//     mySSLConfigSelfSigned.cipherSuite = "ALL"
-//     mySSLConfigChain.cipherSuite = "ALL"
-// #endif // os(Linux)
-
 router.get("/") {
     request, response, next in
     response.send("Hello, World!")
@@ -30,6 +24,6 @@ let (ip, port) = parseAddress()
 Kitura.addHTTPServer(onPort: port, with: router, withSSL: mySSLConfigSelfSigned)
 
 //// https://localhost:8080
-//Kitura.addHTTPServer(onPort: 8080, with: router, withSSL: mySSLConfigChain)
+Kitura.addHTTPServer(onPort: 8081, with: router, withSSL: mySSLConfigChain)
 
 Kitura.run()
